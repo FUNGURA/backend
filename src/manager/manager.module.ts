@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ManagerService } from './manager.service';
 import { ManagerController } from './manager.controller';
-import { Type } from 'class-transformer';
-import { Restaurant } from 'src/entities';
+import { Manager, Restaurant, User } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Restaurant])],
+  imports: [TypeOrmModule.forFeature([Restaurant,User,Restaurant,Manager])],
   controllers: [ManagerController],
   providers: [ManagerService],
 })

@@ -11,16 +11,18 @@ import {
 import { ManagerService } from './manager.service';
 import { UpdateManagerDto } from './dto/update-manager.dto';
 import { DefinedApiResponse } from 'src/payload/defined.payload';
-import { CreateRestaurantDto } from './dto';
+import { CreateRestaurantDto, UpdateRestaurantDTO } from './dto';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators';
+import { GetUser, Roles } from 'src/decorators';
 import { JwtAuthGuard, ManagerGuard } from 'src/guards';
+import { User } from 'src/entities';
 
 @ApiTags('manager')
 @ApiBearerAuth()
@@ -58,23 +60,66 @@ export class ManagerController {
     );
   }
 
-  @Get()
-  findAll() {
-    return this.managerService.findAll();
+  @Patch('/update-profile')
+  @UseGuards(JwtAuthGuard, ManagerGuard)
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Update own manager profile' })
+  @ApiBearerAuth()
+  @ApiBody({ type: UpdateManagerDto })
+  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  @ApiResponse({ status: 409, description: 'Email already taken' })
+  @ApiResponse({ status: 404, description: 'Manager not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async updateProfile(@GetUser() user: User, @Body() dto: UpdateManagerDto) {
+    return new DefinedApiResponse(
+      true,
+      null,
+      await this.managerService.updateOwnProfile(user.uuid, dto),
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.managerService.findOne(+id);
+  @Delete('/restaurant/delete/:id')
+  @UseGuards(JwtAuthGuard, ManagerGuard)
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Delete a restaurant by ID (MANAGER only)' })
+  @ApiParam({ name: 'id', type: String, description: 'Restaurant UUID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Restaurant deleted successfully',
+    type: DefinedApiResponse,
+  })
+  @ApiResponse({ status: 404, description: 'Restaurant not found' })
+  @ApiResponse({ status: 403, description: 'Forbidden (Not manager)' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async removeRestaurant(@Param('id') id: string) {
+    return new DefinedApiResponse(
+      true,
+      null,
+      await this.managerService.deleteRestaurant(id),
+    );
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateManagerDto: UpdateManagerDto) {
-    return this.managerService.update(+id, updateManagerDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.managerService.remove(+id);
+  @Patch('/restaurant/update/:id')
+  @UseGuards(JwtAuthGuard, ManagerGuard)
+  @Roles('MANAGER')
+  @ApiOperation({ summary: 'Update a restaurant by ID (MANAGER only)' })
+  @ApiParam({ name: 'id', type: String, description: 'Restaurant UUID' })
+  @ApiBody({ type: CreateRestaurantDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Restaurant updated successfully',
+    type: DefinedApiResponse,
+  })
+  @ApiResponse({ status: 404, description: 'Restaurant not found' })
+  @ApiResponse({ status: 403, description: 'Forbidden (Not manager)' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async updateRestaurant(
+    @Param('id') id: string,
+    @Body() dto: UpdateRestaurantDTO,
+  ) {
+    return new DefinedApiResponse(
+      true,
+      null,
+      await this.managerService.updateRestaurant(id, dto),
+    );
   }
 }

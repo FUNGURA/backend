@@ -1,7 +1,7 @@
 export enum URole {
-  ADMIN,
-  CLIENT,
-  WAITER,
-  MANAGER,
-  PREP_STATION,
+  ADMIN = 'ADMIN ',
+  CLIENT = 'CLIENT',
+  WAITER = 'WAITER',
+  MANAGER = 'MANAGER',
+  PREP_STATION = 'PREP_STATION',
 }

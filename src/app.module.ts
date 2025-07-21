@@ -5,6 +5,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOptions } from './multer-options.multer';
+import {
+  Bill,
+  Client,
+  Inventory,
+  Manager,
+  MenuItem,
+  MetaData,
+  Order,
+  OrderItem,
+  Reservation,
+  Restaurant,
+  Review,
+  User,
+  Table as RestaurantTable,
+  Waiter,
+} from './entities';
+import { AdminModule } from './admin/admin.module';
+import { AuthModule } from './auth/auth.module';
+import { ManagerModule } from './manager/manager.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,10 +39,44 @@ import { multerOptions } from './multer-options.multer';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [],
-        // synchronize: true,
+        entities: [
+          Bill,
+          Client,
+          Inventory,
+          Manager,
+          MenuItem,
+          MetaData,
+          Order,
+          OrderItem,
+          Reservation,
+          Restaurant,
+          Review,
+          RestaurantTable,
+          User,
+          Waiter,
+        ],
+        synchronize: true,
       }),
     }),
+    TypeOrmModule.forFeature([
+      Bill,
+      Client,
+      Inventory,
+      Manager,
+      MenuItem,
+      MetaData,
+      Order,
+      OrderItem,
+      Reservation,
+      Restaurant,
+      Review,
+      RestaurantTable,
+      User,
+      Waiter,
+    ]),
+    AdminModule,
+    AuthModule,
+    ManagerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

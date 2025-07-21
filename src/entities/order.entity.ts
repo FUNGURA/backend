@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { MetaData } from './metadata.entity.entity';
-import { Table } from './table.entity';
+import { Table as RestaurantTable } from './table.entity';
 import { OrderStatus } from 'src/enum';
 import { IsEnum } from 'class-validator';
 import { Client } from './client.entity';
@@ -9,8 +9,8 @@ import { Bill } from './Bill.entity';
 
 @Entity('orders')
 export class Order extends MetaData {
-  @ManyToOne(() => Table, (table) => table.orders)
-  table: Table;
+  @ManyToOne(() => RestaurantTable, (table) => table.orders)
+  table: RestaurantTable;
 
   @OneToOne(() => Client, (client) => client.orders)
   client: Client;

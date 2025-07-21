@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 import { MenuItem } from './menuItem.entity';
 import { Manager } from './manager.entity';
 import { Inventory } from './inventory.entity';
-import { Table } from './table.entity';
+import { Table as RestaurantTable } from './table.entity';
 import { Reservation } from './reservation.entity';
 import { Review } from './review.entity';
 
@@ -23,8 +23,8 @@ export class Restaurant extends MetaData {
 
   @OneToMany(() => MenuItem, (menu) => menu.restaurant)
   menu: MenuItem[];
-  @OneToMany(() => Table, (table) => table.restaurant)
-  tables: Table[];
+  @OneToMany(() => RestaurantTable, (table) => table.restaurant)
+  tables: RestaurantTable[];
 
   @OneToMany(() => Reservation, (reservation) => reservation.restaurant)
   reservations: Reservation[];

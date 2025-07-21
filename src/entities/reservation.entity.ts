@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { MetaData } from './metadata.entity.entity';
-import { Table } from './table.entity';
+import { Table as RestaurantTable } from './table.entity';
 import { Restaurant } from './restaurant.entity';
 import { Client } from './client.entity';
 import { ReservationStatus } from 'src/enum';
@@ -13,10 +13,10 @@ export class Reservation extends MetaData {
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.reservations)
   restaurant: Restaurant;
 
-  @ManyToOne(() => Table, (table) => table.reservations, {
+  @ManyToOne(() => RestaurantTable, (table) => table.reservations, {
     nullable: true,
   })
-  table: Table;
+  table: RestaurantTable;
 
   @Column({ type: 'timestamp' })
   reservedDate: Date;
@@ -26,7 +26,6 @@ export class Reservation extends MetaData {
 
   @Column({
     enum: ReservationStatus,
-    length: 50,
     default: ReservationStatus.PENDING,
   })
   @IsEnum(ReservationStatus)

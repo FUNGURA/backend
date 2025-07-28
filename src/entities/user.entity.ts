@@ -1,7 +1,8 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { MetaData } from './metadata.entity.entity';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { UGender, URole } from 'src/enum';
+import { OTP } from './otp.entity';
 @Entity('system_users')
 export class User extends MetaData {
   @Column({ type: 'varchar', length: 255 })
@@ -44,4 +45,7 @@ export class User extends MetaData {
   })
   @IsEnum(URole)
   role: URole;
+
+  @OneToMany(() => OTP, (otp) => otp.user)
+  otps: OTP[];
 }

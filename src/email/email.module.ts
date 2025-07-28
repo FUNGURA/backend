@@ -19,10 +19,10 @@ import { EmailService } from './email.service';
           },
         },
         defaults: {
-          from: `"TeLead" <${config.get('SMTP_USERNAME')}>`,
+          from: `"Fungura" <${config.get('SMTP_USERNAME')}>`,
         },
         template: {
-          dir: join(__dirname, 'templates'),
+          dir: join(process.cwd(), 'src', 'email', 'templates'),
           adapter: new EjsAdapter(),
           options: {
             strict: false,

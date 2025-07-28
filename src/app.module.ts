@@ -24,6 +24,8 @@ import {
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { ManagerModule } from './manager/manager.module';
+import { OTP } from './entities/otp.entity';
+import { EmailModule } from './email/email.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -54,6 +56,7 @@ import { ManagerModule } from './manager/manager.module';
           RestaurantTable,
           User,
           Waiter,
+          OTP,
         ],
         synchronize: true,
       }),
@@ -73,10 +76,12 @@ import { ManagerModule } from './manager/manager.module';
       RestaurantTable,
       User,
       Waiter,
+      OTP,
     ]),
     AdminModule,
     AuthModule,
     ManagerModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,8 +19,8 @@ jobs:
         
       - name: Deploy to Server
         env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_HOST: ${{ secrets.SERVERHOST }}
+          SERVER_USER: ${{ secrets.SERVERUSER }}
         run: |
           ssh $SERVER_USER@$SERVER_HOST bash -s <<'EOF'
             # Exit on any error

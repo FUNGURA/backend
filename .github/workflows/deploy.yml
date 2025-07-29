@@ -9,32 +9,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Deploy to Server
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
-          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_HOST << EOF
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_HOST bash -s <<'EOF'
             # Exit on any error
             set -e
 
             # Error handling
-            trap 'echo "Error on line \$LINENO"' ERR
+            trap 'echo "Error on line $LINENO"' ERR
 
             # Source profile and NVM
-            export NVM_DIR="\$HOME/.nvm"
-            [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-             mkdir -p app/Backend-service
-             cd app/Backend-service
+            mkdir -p app/Backend-service
+            cd app/Backend-service
 
             git checkout main
             git fetch origin main
             git reset --hard origin/main
 
             # Install dependencies
-            npm  install
+            npm install
 
             # Docker operations
             docker compose down
@@ -43,5 +44,4 @@ jobs:
 
             # Cleanup
             docker system prune -f
-
           EOF

@@ -1,0 +1,24 @@
+services:
+  fungura-v1-dev-api:
+    build: .
+    container_name: fungura-v1-dev-api
+    restart: always
+    environment:
+      - DB_HOST=10.10.77.42
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=RtbSdfDb@2021#
+      - DB_NAME=fungura
+      - JWT_SECRET=fungura12451
+      - PORT=8086
+    ports:
+      - '8086:8086'
+    volumes:
+      - /test/fungura/files:/test/fungura/files
+      - /backup/fungura/dev:/backup/fungura/dev
+    networks:
+      - fungura-net
+
+networks:
+  fungura-net:
+    driver: bridge

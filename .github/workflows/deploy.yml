@@ -9,67 +9,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-        
       - name: Deploy to Server
         env:
-          SERVERHOST: ${{ secrets.SERVERHOST }}
-          SERVERUSER: ${{ secrets.SERVERUSER }}
-          SERVERPASSWORD: ${{ secrets.SERVERPASSWORD }}
+          SERVER_HOST: ${{ secrets.SERVERHOST }}
+          SERVER_USER: ${{ secrets.SERVERUSER }}
+          SERVER_PASSWORD: ${{ secrets.SERVERPASSWORD }}
         run: |
-          # Debug: Check if secrets are available (without revealing values)
-          echo "SERVERHOST length: ${#SERVERHOST}"
-          echo "SERVERUSER length: ${#SERVERUSER}"
-          echo "SERVERPASSWORD length: ${#SERVERPASSWORD}"
-          
-          # Validate required secrets
-          if [[ -z "$SERVERHOST" ]]; then
-            echo "Error: SERVERHOST secret is not set"
-            exit 1
-          fi
-          if [[ -z "$SERVERUSER" ]]; then
-            echo "Error: SERVERUSER secret is not set"
-            exit 1
-          fi
-          if [[ -z "$SERVERPASSWORD" ]]; then
-            echo "Error: SERVERPASSWORD secret is not set"
-            exit 1
-          fi
-          
-          # Test SSH connection first
-          echo "Testing SSH connection to $SERVERUSER@$SERVERHOST..."
-          sshpass -p "$SERVERPASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 $SERVERUSER@$SERVERHOST "echo 'SSH connection successful'"
-          
-          # Deploy
-          echo "Starting deployment..."
-          sshpass -p "$SERVERPASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVERUSER@$SERVERHOST bash -s <<'EOF'
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_HOST << EOF
             # Exit on any error
             set -e
-            
+
             # Error handling
-            trap 'echo "Error on line $LINENO"' ERR
-            
+            trap 'echo "Error on line \$LINENO"' ERR
+
             # Source profile and NVM
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            
-            mkdir -p app/Backend-service
-            cd app/Backend-service
-            
+            export NVM_DIR="\$HOME/.nvm"
+            [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"
+
+             mkdir -p app/Backend-service
+             cd app/Backend-service
+
             git checkout main
             git fetch origin main
             git reset --hard origin/main
-            
+
             # Install dependencies
-            npm install
-            
+            npm  install
+
             # Docker operations
             docker compose down
             docker compose build --no-cache
             docker compose up -d
-            
+
             # Cleanup
             docker system prune -f
+
           EOF

@@ -107,9 +107,7 @@ export class AuthService {
       const token: string = sign(payload, process.env.JWT_SECRET, {
         expiresIn: '24h',
       });
-      console.log('====================================');
-      console.log(token);
-      console.log('====================================');
+   
       return {
         data: token,
         role: u.role,

@@ -22,12 +22,14 @@ export class ManagerService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
   ) {}
-  async createRestaurant(dto: CreateRestaurantDto): Promise<Restaurant> {
+  async createRestaurant(
+    user: User,
+    dto: CreateRestaurantDto,
+  ): Promise<Restaurant> {
     try {
       const existing = await this.restaurantRepo.findOne({
         where: {
           name: dto.name.trim(),
-          location: dto.location.trim(),
         },
       });
 
@@ -37,11 +39,17 @@ export class ManagerService {
         );
       }
 
-      const newRestaurant = this.restaurantRepo.create({
-        name: dto.name.trim(),
-        location: dto.location.trim(),
+      const manager = await this.managerRepo.findOne({
+        where: {
+          user_id: user.uuid,
+        },
       });
 
+      const newRestaurant = this.restaurantRepo.create({
+        name: dto.name.trim(),
+        location: dto.location,
+        manager,
+      });
       return await this.restaurantRepo.save(newRestaurant);
     } catch (e) {
       if (e instanceof HttpException) {

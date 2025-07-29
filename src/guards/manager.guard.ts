@@ -13,9 +13,9 @@ export class ManagerGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
-    if (!roles || !roles.includes('ADMIN')) {
+    if (!roles || !roles.includes('MANAGER')) {
       throw new UnauthorizedException(
-        'You must have ADMIN role to access this route',
+        'You must have MANAGER role to access this route',
       );
     }
 

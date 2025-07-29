@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { MetaData } from './metadata.entity.entity';
 import { Restaurant } from './restaurant.entity';
 import { MenuItem } from './menuItem.entity';
@@ -16,6 +16,6 @@ export class Manager extends MetaData {
   @OneToMany(() => MenuItem, (item) => item.manager)
   menuItems: MenuItem[];
 
-  @ManyToOne(() => Restaurant, (rest) => rest.managers, { onDelete: 'CASCADE' })
+  @OneToOne(() => Restaurant, (rest) => rest.manager, { onDelete: 'CASCADE' })
   restaurant: Restaurant;
 }

@@ -52,11 +52,14 @@ export class ManagerController {
     status: 500,
     description: 'Internal Server Error',
   })
-  async createRestaurant(@Body() dto: CreateRestaurantDto) {
+  async createRestaurant(
+    @GetUser() user: User,
+    @Body() dto: CreateRestaurantDto,
+  ) {
     return new DefinedApiResponse(
       true,
       null,
-      await this.managerService.createRestaurant(dto),
+      await this.managerService.createRestaurant(user, dto),
     );
   }
 

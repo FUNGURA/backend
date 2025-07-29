@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsObject } from 'class-validator';
+import { Location } from 'src/dtos';
 
 export class CreateRestaurantDto {
   @ApiProperty({
@@ -14,7 +15,7 @@ export class CreateRestaurantDto {
     description: 'Location/address of the restaurant',
     example: 'Kigali, Rwanda',
   })
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  location: string;
+  location: Location;
 }

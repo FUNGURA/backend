@@ -35,7 +35,7 @@ export class AdminService {
       const hashedPassword = await hash(dto.password, 10);
 
       // Create User with MANAGER role
-      const user = this.userRepo.create({
+      const user =await  this.userRepo.create({
         firstname: dto.firstname,
         lastname: dto.lastname,
         email: dto.email,

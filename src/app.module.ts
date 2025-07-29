@@ -26,6 +26,7 @@ import { AuthModule } from './auth/auth.module';
 import { ManagerModule } from './manager/manager.module';
 import { OTP } from './entities/otp.entity';
 import { EmailModule } from './email/email.module';
+import { MenuModule } from './menu/menu.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -82,6 +83,7 @@ import { EmailModule } from './email/email.module';
     AuthModule,
     ManagerModule,
     EmailModule,
+    MenuModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,19 +10,41 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Setup SSH Key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
         
       - name: Deploy to Server
         env:
-          SERVER_HOST: ${{ secrets.SERVERHOST }}
-          SERVER_USER: ${{ secrets.SERVERUSER }}
+          SERVERHOST: ${{ secrets.SERVERHOST }}
+          SERVERUSER: ${{ secrets.SERVERUSER }}
+          SERVERPASSWORD: ${{ secrets.SERVERPASSWORD }}
         run: |
-          ssh $SERVER_USER@$SERVER_HOST bash -s <<'EOF'
+          # Debug: Check if secrets are available (without revealing values)
+          echo "SERVERHOST length: ${#SERVERHOST}"
+          echo "SERVERUSER length: ${#SERVERUSER}"
+          echo "SERVERPASSWORD length: ${#SERVERPASSWORD}"
+          
+          # Validate required secrets
+          if [[ -z "$SERVERHOST" ]]; then
+            echo "Error: SERVERHOST secret is not set"
+            exit 1
+          fi
+          if [[ -z "$SERVERUSER" ]]; then
+            echo "Error: SERVERUSER secret is not set"
+            exit 1
+          fi
+          if [[ -z "$SERVERPASSWORD" ]]; then
+            echo "Error: SERVERPASSWORD secret is not set"
+            exit 1
+          fi
+          
+          # Test SSH connection first
+          echo "Testing SSH connection to $SERVERUSER@$SERVERHOST..."
+          sshpass -p "$SERVERPASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 $SERVERUSER@$SERVERHOST "echo 'SSH connection successful'"
+          
+          # Deploy
+          echo "Starting deployment..."
+          sshpass -p "$SERVERPASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVERUSER@$SERVERHOST bash -s <<'EOF'
             # Exit on any error
             set -e
             

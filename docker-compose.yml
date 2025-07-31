@@ -1,27 +1,5 @@
+version: '3.8'
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: fungura-postgres
-    restart: always
-    environment:
-      - POSTGRES_DB=fungura
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=RtbSdfDb@2021#
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    ports:
-      - '5438:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-scripts:/docker-entrypoint-initdb.d
-    networks:
-      - fungura-net
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d fungura']
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
   fungura-v1-dev-api:
     build: .
     container_name: fungura-v1-dev-api
@@ -35,13 +13,6 @@ services:
       - /backup/fungura/dev:/backup/fungura/dev
     networks:
       - fungura-net
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-volumes:
-  postgres_data:
-    driver: local
 
 networks:
   fungura-net:

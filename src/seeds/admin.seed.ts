@@ -8,10 +8,10 @@ config();
 
 const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'postgres',
-  port: Number('5432'),
-  username: 'postgres',
-  password: 'RtbSdfDb@2021#',
+  host: 'dpg-d25i2b3e5dus73a4htmg-a', // 👈 from your env
+  port: 5432,
+  username: 'fungura_user',
+  password: 'PFBv5qilrle6OWo58k8jRqwTupMDnyfw',
   database: 'fungura',
   synchronize: false,
   logging: false,

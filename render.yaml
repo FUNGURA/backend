@@ -4,8 +4,8 @@ services:
     env: docker
     plan: free
     dockerfilePath: Dockerfile
-    buildCommand: ""
-    startCommand: ""
+    buildCommand: ''
+    startCommand: ''
     envVars:
       - key: DB_HOST
         value: fungura-postgres
@@ -25,7 +25,7 @@ services:
   - type: private_service
     name: fungura-postgres
     env: docker
-    dockerfilePath: ""
+    dockerfilePath: ''
     image: postgres:15-alpine
     autoDeploy: false
     envVars:

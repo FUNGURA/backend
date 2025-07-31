@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: fungura-api
+    env: docker
+    plan: free
+    dockerfilePath: Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: DB_HOST
+        value: fungura-postgres
+      - key: DB_PORT
+        value: 5432
+      - key: DB_USERNAME
+        value: postgres
+      - key: DB_PASSWORD
+        value: RtbSdfDb@2021#
+      - key: DB_NAME
+        value: fungura
+      - key: JWT_SECRET
+        value: fungura12451
+      - key: PORT
+        value: 8086
+
+  - type: private_service
+    name: fungura-postgres
+    env: docker
+    dockerfilePath: ""
+    image: postgres:15-alpine
+    autoDeploy: false
+    envVars:
+      - key: POSTGRES_DB
+        value: fungura
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        value: RtbSdfDb@2021#

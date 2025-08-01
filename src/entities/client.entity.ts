@@ -13,6 +13,6 @@ export class Client extends MetaData {
   orders: Order[];
   @OneToMany(() => Reservation, (reservation) => reservation.client)
   reservations: Reservation[];
-  @OneToOne(() => Review, (review) => review.client)
-  review: Review;
+  @OneToMany(() => Review, (review) => review.client)
+  reviews: Review;
 }

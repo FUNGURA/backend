@@ -4,3 +4,4 @@ export * from './OrderStatus.enum';
 export * from './paymentMethod.enum';
 export * from './OrderItemStatus.enum';
 export * from './ReservationStatus.enum';
+export * from './OrderType.enum';

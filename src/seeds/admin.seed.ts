@@ -8,13 +8,14 @@ config();
 
 const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'dpg-d25i2b3e5dus73a4htmg-a', // 👈 from your env
-  port: 5432,
-  username: 'fungura_user',
-  password: 'PFBv5qilrle6OWo58k8jRqwTupMDnyfw',
-  database: 'fungura',
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   synchronize: false,
   logging: false,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
 });
 
 async function seedAdmin() {

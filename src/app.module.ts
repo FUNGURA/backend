@@ -60,6 +60,10 @@ import { MenuModule } from './menu/menu.module';
           OTP,
         ],
         synchronize: true,
+        ssl:
+          configService.get<string>('DB_SSL') === 'true'
+            ? { rejectUnauthorized: false }
+            : false,
       }),
     }),
     TypeOrmModule.forFeature([

@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
-import { Manager, MenuItem, Restaurant, User } from 'src/entities';
+import { Manager, MenuItem, PrepStation, Restaurant, User } from 'src/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -21,30 +21,27 @@ export class MenuService {
     private readonly managerRepo: Repository<Manager>,
     @InjectRepository(MenuItem)
     private readonly menuRepo: Repository<MenuItem>,
-  ) {}
+    @InjectRepository(PrepStation)
+    private readonly prepStationRepo: Repository<PrepStation>,
+  ) { }
+
   async create(user: User, dto: CreateMenuDto) {
     try {
       const restaurant = await this.restaurantRepo.findOne({
-        where: {
-          uuid: dto.restaurantId,
-        },
+        where: { uuid: dto.restaurantId },
         relations: ['manager'],
       });
       if (!restaurant)
-        throw new NotFoundException('not restaurant found with that id ');
-      const manager = await this.managerRepo.findOne({
-        where: {
-          user_id: user.uuid,
-        },
-      });
+        throw new NotFoundException('Restaurant not found with that id');
 
+      const manager = await this.managerRepo.findOne({ where: { user_id: user.uuid } });
       const authorized = restaurant.manager.uuid === manager?.uuid;
+      if (!authorized)
+        throw new ForbiddenException('You are not authorized to create this menu item');
 
-      if (!authorized) {
-        throw new ForbiddenException(
-          'You are not authorized to update this menu item',
-        );
-      }
+      const prepStation = await this.prepStationRepo.findOne({ where: { uuid: dto.prepStationId } });
+      if (!prepStation) throw new NotFoundException('Prep station not found');
+
       return await this.menuRepo.save({
         name: dto.name,
         description: dto.description,
@@ -53,14 +50,14 @@ export class MenuService {
         available: dto.available,
         manager,
         restaurant,
+        prepStation,
       });
     } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
+      if (e instanceof HttpException) throw e;
       throw new InternalServerErrorException(e.message);
     }
   }
+
 
   findAllByRestaurant(restaurantId: string) {
     return this.menuRepo.find({
@@ -90,32 +87,26 @@ export class MenuService {
   async update(id: string, dto: UpdateMenuDto, user: User) {
     const menu = await this.menuRepo.findOne({
       where: { uuid: id },
-      relations: ['restaurant', 'restaurant.managers'],
+      relations: ['restaurant', 'restaurant.manager'],
     });
+    if (!menu) throw new NotFoundException('Menu item not found');
 
-    if (!menu) {
-      throw new NotFoundException('Menu item not found');
-    }
-
-    const manager = await this.managerRepo.findOne({
-      where: { user_id: user.uuid },
-    });
-
+    const manager = await this.managerRepo.findOne({ where: { user_id: user.uuid } });
     const authorized = menu.restaurant.manager.uuid === manager?.uuid;
+    if (!authorized)
+      throw new ForbiddenException('You are not authorized to update this menu item');
 
-    if (!authorized) {
-      throw new ForbiddenException(
-        'You are not authorized to update this menu item',
-      );
+    if (dto.prepStationId) {
+      const prepStation = await this.prepStationRepo.findOne({ where: { uuid: dto.prepStationId } });
+      if (!prepStation) throw new NotFoundException('Prep station not found');
+      menu.prepStation = prepStation;
     }
 
     Object.assign(menu, {
       ...(dto.name && { name: dto.name }),
       ...(dto.description && { description: dto.description }),
       ...(dto.price !== undefined && { price: dto.price }),
-      ...(dto.preparationTime !== undefined && {
-        preparationTime: dto.preparationTime,
-      }),
+      ...(dto.preparationTime !== undefined && { preparationTime: dto.preparationTime }),
       ...(dto.available !== undefined && { available: dto.available }),
     });
 
@@ -126,6 +117,7 @@ export class MenuService {
       throw new InternalServerErrorException('Failed to update menu item');
     }
   }
+
 
   async remove(id: string, user: User) {
     try {

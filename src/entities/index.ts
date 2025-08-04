@@ -13,3 +13,4 @@ export * from './table.entity';
 
 export * from './user.entity';
 export * from './waiter.entity';
+export * from './prepStaion.entity';

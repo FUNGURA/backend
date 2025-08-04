@@ -27,6 +27,10 @@ import { ManagerModule } from './manager/manager.module';
 import { OTP } from './entities/otp.entity';
 import { EmailModule } from './email/email.module';
 import { MenuModule } from './menu/menu.module';
+import { RestaurantModule } from './restaurant/restaurant.module';
+import { OrderModule } from './order/order.module';
+import { PrepStation } from './entities/prepStaion.entity';
+import { PrepStationModule } from './prep-station/prep-station.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -37,7 +41,7 @@ import { MenuModule } from './menu/menu.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
+        host: configService.get<string>('DB_HOST') || 'localhost',
         port: configService.get<number>('DB_PORT'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
@@ -58,6 +62,7 @@ import { MenuModule } from './menu/menu.module';
           User,
           Waiter,
           OTP,
+          PrepStation,
         ],
         synchronize: true,
       }),
@@ -78,12 +83,16 @@ import { MenuModule } from './menu/menu.module';
       User,
       Waiter,
       OTP,
+      PrepStation,
     ]),
     AdminModule,
     AuthModule,
     ManagerModule,
     EmailModule,
     MenuModule,
+    RestaurantModule,
+    OrderModule,
+    PrepStationModule
   ],
   controllers: [AppController],
   providers: [AppService],

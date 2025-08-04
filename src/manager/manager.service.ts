@@ -21,7 +21,7 @@ export class ManagerService {
     private readonly managerRepo: Repository<Manager>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-  ) {}
+  ) { }
   async createRestaurant(
     user: User,
     dto: CreateRestaurantDto,
@@ -48,6 +48,9 @@ export class ManagerService {
       const newRestaurant = this.restaurantRepo.create({
         name: dto.name.trim(),
         location: dto.location,
+        image: dto.image,
+        openTime: dto.openTime,
+        closeTime: dto.closeTime,
         manager,
       });
       return await this.restaurantRepo.save(newRestaurant);
@@ -113,6 +116,10 @@ export class ManagerService {
         }
         restaurant.name = dto.name ?? restaurant.name;
         restaurant.location = dto.location ?? restaurant.location;
+        restaurant.image = dto.image ?? restaurant.image;
+        restaurant.openTime = dto.openTime ?? restaurant.openTime;
+        restaurant.closeTime = dto.closeTime ?? restaurant.closeTime;
+        
         return this.restaurantRepo.save(restaurant);
       });
   }

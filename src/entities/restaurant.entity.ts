@@ -37,6 +37,6 @@ export class Restaurant extends MetaData {
 
   @OneToMany(() => Reservation, (reservation) => reservation.restaurant)
   reservations: Reservation[];
-  @OneToMany(() => Review, (review) => review.client)
+  @OneToMany(() => Review, (review) => review.restaurant)
   reviews: Review[];
 }

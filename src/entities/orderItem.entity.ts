@@ -5,6 +5,7 @@ import { MenuItem } from './menuItem.entity';
 import { OrderItemStatus } from 'src/enum';
 import { IsEnum } from 'class-validator';
 import { Order } from './order.entity';
+import { PrepStation } from './prepStaion.entity';
 @Entity('order_items')
 export class OrderItem extends MetaData {
   @OneToOne(() => Waiter, (waiter) => waiter.orderItem, { nullable: true })
@@ -23,4 +24,7 @@ export class OrderItem extends MetaData {
   status: OrderItemStatus;
   @ManyToOne(() => Order, (order) => order.items)
   order: Order;
+  @ManyToOne(() => PrepStation, (station) => station.orderItems, { nullable: true })
+  prepStation: PrepStation;
+
 }

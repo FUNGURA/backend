@@ -55,4 +55,12 @@ export class CreateMenuDto {
   })
   @IsUUID()
   restaurantId: string;
+
+  @ApiProperty({
+    description: 'UUID of the prep station',
+    example: 'b2c3d4e5-6f7g-8h9i-j0k1-l2m3n4o5p6q7',
+  })
+  @IsUUID()
+  prepStationId: string;
+
 }

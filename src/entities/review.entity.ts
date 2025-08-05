@@ -5,7 +5,7 @@ import { Restaurant } from './restaurant.entity';
 
 @Entity('reviews')
 export class Review extends MetaData {
-  @OneToOne(() => Client, (client) => client.review, {
+  @OneToOne(() => Client, (client) => client.reviews, {
     onDelete: 'CASCADE',
   })
   client: Client;

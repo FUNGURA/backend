@@ -3,6 +3,7 @@ import { MetaData } from './metadata.entity.entity';
 import { IsBoolean, IsNumber, IsString } from 'class-validator';
 import { Manager } from './manager.entity';
 import { Restaurant } from './restaurant.entity';
+import { PrepStation } from './prepStaion.entity';
 @Entity('menu_items')
 export class MenuItem extends MetaData {
   @Column()
@@ -32,4 +33,7 @@ export class MenuItem extends MetaData {
     onDelete: 'CASCADE',
   })
   restaurant: Restaurant;
+  @ManyToOne(() => PrepStation, (station) => station.menuItems, { nullable: false })
+  prepStation: PrepStation;
+
 }

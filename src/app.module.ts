@@ -31,6 +31,7 @@ import { RestaurantModule } from './restaurant/restaurant.module';
 import { OrderModule } from './order/order.module';
 import { PrepStation } from './entities/prepStaion.entity';
 import { PrepStationModule } from './prep-station/prep-station.module';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -96,9 +97,10 @@ import { PrepStationModule } from './prep-station/prep-station.module';
     MenuModule,
     RestaurantModule,
     OrderModule,
-    PrepStationModule
+    PrepStationModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -4,12 +4,16 @@ import { Repository } from 'typeorm';
 import { PrepStation } from 'src/entities/prepStaion.entity';
 import { CreatePrepStationDto } from './dto/create-prep-station.dto';
 import { UpdatePrepStationDto } from './dto/update-prep-station.dto';
+import { Restaurant } from 'src/entities';
 
 @Injectable()
 export class PrepStationService {
     constructor(
         @InjectRepository(PrepStation)
         private readonly prepStationRepo: Repository<PrepStation>,
+
+        @InjectRepository(Restaurant)
+        private readonly restaurantRepo: Repository<Restaurant>,
     ) { }
 
     async create(dto: CreatePrepStationDto) {
@@ -18,16 +22,29 @@ export class PrepStationService {
             throw new ConflictException(`Prep station with name ${dto.name} already exists`);
         }
 
-        const prepStation = this.prepStationRepo.create(dto);
+        const restaurant = await this.restaurantRepo.findOne({ where: { uuid: dto.restaurantId } });
+        if (!restaurant) throw new NotFoundException('Restaurant not found');
+
+        const prepStation = this.prepStationRepo.create({
+            ...dto,
+            restaurant,
+        });
+
         return await this.prepStationRepo.save(prepStation);
     }
 
     async findAll() {
-        return await this.prepStationRepo.find({ relations: ['menuItems'] });
+        return await this.prepStationRepo.find({
+            relations: ['restaurant', 'menuItems']
+        });
     }
 
     async update(id: string, dto: UpdatePrepStationDto) {
-        const prepStation = await this.prepStationRepo.findOne({ where: { uuid: id } });
+        const prepStation = await this.prepStationRepo.findOne({
+            where: { uuid: id },
+            relations: ['restaurant']
+        });
+
         if (!prepStation) throw new NotFoundException('Prep station not found');
 
         if (dto.name && dto.name !== prepStation.name) {

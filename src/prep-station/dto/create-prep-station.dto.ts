@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsUUID } from 'class-validator';
 
 export class CreatePrepStationDto {
   @ApiProperty({ example: 'Kitchen' })
@@ -10,4 +10,8 @@ export class CreatePrepStationDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ example: 'uuid-of-restaurant' })
+  @IsUUID()
+  restaurantId: string;
 }

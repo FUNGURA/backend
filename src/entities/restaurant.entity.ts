@@ -8,6 +8,7 @@ import { Table as RestaurantTable } from './table.entity';
 import { Reservation } from './reservation.entity';
 import { Review } from './review.entity';
 import { Location } from 'src/dtos';
+import { PrepStation } from './prepStaion.entity';
 @Entity('restaurants')
 export class Restaurant extends MetaData {
   @Column({ type: 'varchar', length: 255 })
@@ -35,8 +36,13 @@ export class Restaurant extends MetaData {
   @OneToMany(() => RestaurantTable, (table) => table.restaurant)
   tables: RestaurantTable[];
 
+  @OneToMany(() => PrepStation, (prepStation) => prepStation.restaurant)
+  prepStations: PrepStation[];
+
+
   @OneToMany(() => Reservation, (reservation) => reservation.restaurant)
   reservations: Reservation[];
+
   @OneToMany(() => Review, (review) => review.restaurant)
   reviews: Review[];
 }
